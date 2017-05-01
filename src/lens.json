@@ -1,0 +1,8 @@
+{
+  "name": "SimpleLens",
+  "description": "A basic lens with realtime listeners",
+  "helpEmail": "anny.he@salesforce.com",
+  "helpUrl": "https://github.com/salesforce/refocus-ldk",
+  "license": "TBD",
+  "version": "0.0.1"
+}
