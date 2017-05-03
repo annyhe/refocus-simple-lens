@@ -12,17 +12,14 @@ What we'll cover in this tutorial:
 $ git clone https://github.com/Salesforce/refocus-ldk
 $ cd refocus-ldk
 $ npm install
-$ mkdir Lenses/SimpleLens/src
+$ mkdir Lenses/WhackAMole/src
 ```
-Add the default lens template.
-```sh
-$ cp main.template Lenses/SimpleLens/src/main.js
-```
+
 Set the LDK to use the new lens:
 ```sh
-npm config set refocus-ldk:lens SimpleLens
+npm config set refocus-ldk:lens WhackAMole
 ```
-Open two terminal tabs: run
+Open a terminal and run
 ```sh
 npm run prototype
 ```
@@ -30,12 +27,14 @@ to start up server. Now you're ready to see the events stream in!
 Go to http://localhost:3000/configForm.html to set how often to send in the realtime events.
 ![cnfiguration page screenshot](/configPage.png)
 
+Make sure to set the `Realtime Event Interval` to something other than `Off`, and set the numbers in the `maximum number of changes` as more than 0. The more events you set, the more moles there will be to whack!
+
 On clicking the Save button, you will be redirected to the lens page on http://localhost:3000.
 Open the browser console to see the streaming events being logged:  ![screenshot of the events being streamed in](/eventsLogged.png).
 
 ##### Add a dataset
 For this game we need a 6 by 6 dataset. We achieve this with 6 subjects, and 6 aspects.
-Add the subjects dataset to `public/dataset/one-level.json`
+Add the subjects dataset to `public/datasets/one-level.json`
 ```json
 {
   "absolutePath": "Fellowship",
@@ -45,44 +44,49 @@ Add the subjects dataset to `public/dataset/one-level.json`
     {
       "absolutePath": "Fellowship.Gandalf",
       "name": "Gandalf",
-      "samples": [],
+      "samples": []
     },
     {
       "absolutePath": "Fellowship.Boromir",
       "name": "Boromir",
-      "samples": [],
+      "samples": []
     },
     {
       "absolutePath": "Fellowship.Aragorn",
       "name": "Aragorn",
-      "samples": [],
+      "samples": []
     },
     {
       "absolutePath": "Fellowship.Peregrin",
       "name": "Peregrin",
-      "samples": [],
+      "samples": []
     },
     {
       "absolutePath": "Fellowship.Meriadoc",
       "name": "Meriadoc",
-      "samples": [],
+      "samples": []
     },
     {
       "absolutePath": "Fellowship.CHX",
       "name": "CHX",
-      "samples": [],
+      "samples": []
     }
   ]
 }
 ```
 
-Add the aspects dataset to `public/dataset/one-level-aspects.json`
+Make a new file for the aspects dataset: `public/datasets/one-level-aspects.json`
 ```json
 ["and", "she", "said", "winter", "is", "coming"]
 ```
 
 
-Add the path to the dataset as another `<option>` element in `public/configForm.html`
+Add the path to the dataset as another `<option>` element in `public/configForm.html`, under the existing `<option>` element:
+```html
+<option value="one-level.json">
+  Flat hierarchy Simulation
+</option>
+```
 Go to http://localhost:3000/configForm.html to change to use the newly added dataset.
 
 
@@ -181,7 +185,7 @@ When the page receives streamed in events, we need to update this data handler. 
 Add the following file:
 ```js
 /**
- * Lenses/SimpleLens/src/utils.js
+ * Lenses/WhackAMole/src/utils.js
  *
  * Utility functions to kep the client-side subject and sample data
  * updated with streamed-in data
@@ -283,7 +287,7 @@ module.exports = {
 
 ```
 We also need HTML to display the lens and the score. For our simple lens we will use handlebars.
-Make a file in `Lenses/SimpleLens/src/templates` called `gameSpace.handlebars` with the following
+Make a file in `Lenses/WhackAMole/src/templates` called `gameSpace.handlebars` with the following
 ```html
 <section>
     <p id='subjectsArr'></p>
@@ -297,7 +301,7 @@ Make a file in `Lenses/SimpleLens/src/templates` called `gameSpace.handlebars` w
 We also need to render the game stage and update the scores. Make a file with the following:
 ```js
 /**
- * Lenses/SimpleLens/src/game.js
+ * Lenses/WhackAMole/src/game.js
  *
  * Specifies game-centric DOM manipulations
  */
@@ -329,7 +333,7 @@ module.exports = {
 };
 ```
 
-To give our game a spiffy look, make a css file with path `Lenses/SimpleLens/src/lens.css` with the following
+To give our game a spiffy look, make a css file with path `Lenses/WhackAMole/src/lens.css` with the following
 ```css
 body {
   margin: 0;
@@ -372,10 +376,10 @@ body {
 }
 ```
 Lastly, we combine all our hard work into a single file. This file sets up the realtime event handlers and calls other files to set up the DOM.
-Add the `Lenses/SimpleLens/src/main.js`
+Add the `Lenses/WhackAMole/src/main.js`
 ```js
 /**
- * Lenses/SimpleLens/src/main.js
+ * Lenses/WhackAMole/src/main.js
  *
  * Sets up event handlers and DOM manipulations in response to streamd-in data.
  */
@@ -491,19 +495,19 @@ And make sure the server is running
 ```sh
 $ npm run prototype
 ```
-Go to http://localhost:3000/configForm.html to configure subjects and samples to streame in.
+Go to http://localhost:3000/configForm.html to configure subjects and samples to stream in.
 Hit `Save` and enjoy your whack a mole game at http://localhost:3000!
 
 
-### Buid and deploy
+### Build and deploy
 Add a lens description json file
 ```sh
-$ touch Lenses/SimpleLens/src/lens.json
+$ touch Lenses/WhackAMole/src/lens.json
 ```
 Paste the following:
 ```json
 {
-  "name": "SimpleLens",
+  "name": "WhackAMole",
   "description": "A basic lens with realtime listeners",
   "helpEmail": "YOUR_EMAIL_HERE",
   "helpUrl": "YOUR_URL_HERE",
@@ -511,11 +515,13 @@ Paste the following:
   "version": "0.0.1"
 }
 ```
-Package up all your lens resources into `./dist/SimpleLens.zip` for deployment using the build script:
+Package up all your lens resources into `./dist/WhackAMole.zip` for deployment using the build script:
 ```sh
 npm run build
 ```
-For deployment, when you are ready to install your new lens into Refocus, upload `./dist/SimpleLens.zip` as your lens library file use the Refocus API `/v1/lenses`.
+For deployment, when you are ready to install your new lens into Refocus, upload `./dist/WhackAMole.zip` as your lens library file use the Refocus API `/v1/lenses`.
+Refer to the diagram below for url and body content.
+![screenshot of the postman POST /v1/lenses request](/postLens.png).
 
 ### Development
 We welcome contributions in the form of new lenses, LDK improvements, and whatever else you can think of!
