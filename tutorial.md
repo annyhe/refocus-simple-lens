@@ -32,7 +32,7 @@ Go to http://localhost:3000/configForm.html to set how often to send in the real
 Make sure to set the `Realtime Event Interval` to something other than `Off`, and set the numbers in the `maximum number of changes` as more than 0. The more events you set, the more moles there will be to whack!
 
 On clicking the Save button, you will be redirected to the lens page on http://localhost:3000.
-Open the browser console to see the streaming events being logged:  ![screenshot of the events being streamed in](/eventsLogged.png).
+Open the browser console to see the streaming events being logged:  ![screenshot of the events being streamed in](/eventsLogged.png)
 
 ##### Add a dataset
 For this game we need a 6 by 6 dataset. We achieve this with 6 subjects, and 6 aspects.
@@ -520,7 +520,7 @@ LENS_ELEMENT.addEventListener('refocus.lens.load', () => {
   });
 }); // "load" event listener
 ```
-That's it for the files we need! Compile the lens by running these on separate tabs
+That's it for the files we need! Compile the lens by running
 ```sh
 $ npm run compile-watch
 ```
@@ -538,6 +538,7 @@ The screen should look like this
 ## Troubleshooting
 No samples streaming in: make sure to configure the samples and subjects to be added in the http://localhost:3000/configForm.html. Refer to the `Stream Samples` section of this tutorial.
 
+Cannot read the length of undefiend in getIndexOfSubjectAndSample: are the subject datasets and aspect datasets loaded corrctly in main.js? If so, refresh the page on http://localhost:3000 and the error should go away.
 
 ## Extras
 ### Build and deploy
@@ -579,5 +580,4 @@ $ npm run test
 Next Steps
 ===
 - implement different scores for different realtime events
-- deploy the lens onto a refocus instance. Refer to the build and deploy section of this tutorial. To get an instance of refocus, try the one button deploy on https://github.com/salesforce/refocus
-- build a lens using multi-level data. Refer to https://github.com/salesforce/refocus-lens-multitable for an example implementation
+- build a lens using multi-level data
