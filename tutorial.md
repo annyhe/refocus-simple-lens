@@ -580,4 +580,5 @@ $ npm run test
 Next Steps
 ===
 - implement different scores for different realtime events
-- build a lens using multi-level data
+- deploy onto refocus. Get an instance of refocus with one button deploy: https://github.com/Salesforce/refocus
+- build a lens using multi-level data. Refer to https://github.com/salesforce/refocus-lens-multitable for a sample implementation with d3
