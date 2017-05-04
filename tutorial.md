@@ -19,11 +19,13 @@ Set the LDK to use the new lens:
 ```sh
 npm config set refocus-ldk:lens WhackAMole
 ```
-Open a terminal and run
+Start the LDK server with
 ```sh
 npm run prototype
 ```
 to start up server. Now you're ready to see the events stream in!
+
+#Stream Samples
 Go to http://localhost:3000/configForm.html to set how often to send in the realtime events.
 ![cnfiguration page screenshot](/configPage.png)
 
@@ -34,7 +36,7 @@ Open the browser console to see the streaming events being logged:  ![screenshot
 
 ##### Add a dataset
 For this game we need a 6 by 6 dataset. We achieve this with 6 subjects, and 6 aspects.
-Add the subjects dataset to `public/datasets/one-level.json`
+Specify the subjects dataset in `public/datasets` with the following JSON. Call it `one-level.json`
 ```json
 {
   "absolutePath": "Fellowship",
@@ -75,7 +77,7 @@ Add the subjects dataset to `public/datasets/one-level.json`
 }
 ```
 
-Make a new file for the aspects dataset: `public/datasets/one-level-aspects.json`
+Speifify the aspects dataset with a new file: `public/datasets/one-level-aspects.json` with the following
 ```json
 ["and", "she", "said", "winter", "is", "coming"]
 ```
@@ -93,12 +95,17 @@ Go to http://localhost:3000/configForm.html to change to use the newly added dat
 
 ### Set up mock data
 We still need to provision the data. You can choose which dataset to use from the dropdown on http://localhost:3000/configForm.html
-![screenshot of the config dropdown](/optionDropdown.png).
+![screenshot of the config dropdown](/optionDropdown.png)
 For this tutorial we choose the `Flat hierarchy Simulation` dataset from the dropdown
 
 ### Change data stream
 To change the format of the data being streamed in, go to `src/Realtime.js`.
 We need to change the random data generation to return only subjects that is one level deep, since subjects make up the columns of the whack a mole game. We also need to limit the aspects to only those defined in the dataset, which correspond to the rows in our game.
+
+We need to get the subjects dataset. Put this require into the top with other requires
+```js
+const dataset = require('../public/datasets/one-level.json');
+```
 
 The default `prepareSubjectAdds` generate subjects that are multiple levels deep. We need to change it to return only subjects defined in `./
 public/datasets/one-level.json`
@@ -148,6 +155,31 @@ prepareSampleAdds() {
 } // prepareSampleAdds
 ```
 
+We also need to change the random sample generator in the `src/Random.js` to return samples with the aspects we defined.
+In `src/Random.js`, add the aspects dataset by putting this require into the top with other requires
+```js
+const dataset = require('../public/datasets/one-level-aspects.json');
+```
+Then replace the addSamples function with the following:
+```js
+  static addSample(subject) {
+    const now = new Date().toJSON();
+    const idx = Math.floor(Math.random() * dataset.length);// between 0 and 10
+    const aspectName = dataset[idx];
+    return {
+      aspect: { name: aspectName },
+      messageBody: this.messageBody(),
+      messageCode: this.messageCode(),
+      name: subject.absolutePath + '|' + aspectName,
+      status: this.status(),
+      statusChangedAt: now,
+      subjectId: subject.id,
+      updatedAt: now,
+      value: this.value(),
+    };
+  } // addSample
+```
+
 Run this command to build and compile the ldk
 ```sh
 npm run ldk-compile
@@ -182,7 +214,9 @@ For our game, the data structure to store subjects and aspects is
 ```
 
 When the page receives streamed in events, we need to update this data handler. We also include another utility function that illustrates how the data is stored.
-Add the following file:
+Create a folder in Lenses called `WhackAMole`.
+In the WhackAMole folder, create a `src` folder
+In the src folder, add the following file called `utils.js`:
 ```js
 /**
  * Lenses/WhackAMole/src/utils.js
@@ -287,7 +321,7 @@ module.exports = {
 
 ```
 We also need HTML to display the lens and the score. For our simple lens we will use handlebars.
-Make a file in `Lenses/WhackAMole/src/templates` called `gameSpace.handlebars` with the following
+Make a `templates` folder in `Lenses/WhackAMole/src`. In the newly created folder, add a file called `gameSpace.handlebars` with the following
 ```html
 <section>
     <p id='subjectsArr'></p>
@@ -298,7 +332,7 @@ Make a file in `Lenses/WhackAMole/src/templates` called `gameSpace.handlebars` w
     </p>
 </section>
 ```
-We also need to render the game stage and update the scores. Make a file with the following:
+We also need to render the game stage and update the scores. Make a file calle `game.js` in `src` folder with the following:
 ```js
 /**
  * Lenses/WhackAMole/src/game.js
@@ -333,7 +367,7 @@ module.exports = {
 };
 ```
 
-To give our game a spiffy look, make a css file with path `Lenses/WhackAMole/src/lens.css` with the following
+To give our game a spiffy look, make a css file called `lens.css` in the `src` folder with with the following
 ```css
 body {
   margin: 0;
@@ -376,7 +410,7 @@ body {
 }
 ```
 Lastly, we combine all our hard work into a single file. This file sets up the realtime event handlers and calls other files to set up the DOM.
-Add the `Lenses/WhackAMole/src/main.js`
+Add the `main.js` file to the `src` folder
 ```js
 /**
  * Lenses/WhackAMole/src/main.js
@@ -497,8 +531,15 @@ $ npm run prototype
 ```
 Go to http://localhost:3000/configForm.html to configure subjects and samples to stream in.
 Hit `Save` and enjoy your whack a mole game at http://localhost:3000!
+The screen should look like this
+![whack a mole picture](/whackAMole.png)
 
 
+## Troubleshooting
+No samples streaming in: make sure to configure the samples and subjects to be added in the http://localhost:3000/configForm.html. Refer to the `Stream Samples` section of this tutorial.
+
+
+## Extras
 ### Build and deploy
 Add a lens description json file
 ```sh
@@ -538,4 +579,5 @@ $ npm run test
 Next Steps
 ===
 - implement different scores for different realtime events
-- build a lens using multi-level data
+- deploy the lens onto a refocus instance. Refer to the build and deploy section of this tutorial. To get an instance of refocus, try the one button deploy on https://github.com/salesforce/refocus
+- build a lens using multi-level data. Refer to https://github.com/salesforce/refocus-lens-multitable for an example implementation
