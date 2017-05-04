@@ -2,6 +2,8 @@
 
 A realtime whack-a-mole game. Try to improve on this!
 
+For a step by step tutorial, refer to [the tutorial](./tutorial.md)
+
 ![whack a mole picture](/whackAMole.png)
 
 ### Setup
@@ -42,4 +44,4 @@ npm run build
 
 ### Deploy
 
-Use the Refocus UI or API (`/v1/lenses`) to deploy the lens.
+Use the Refocus UI or API (`/v1/lenses`) to deploy the lens. Refer to the Deploy section on [the tutorial](./tutorial.md)
