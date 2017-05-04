@@ -117,10 +117,9 @@ prepareSubjectAdds() {
   const x = Random.intBetween(0, this.conf.subjects.maxAdd);
   console.log('ldk.Realtime.prepareSubjectAdds', new Date(),
     `Preparing a batch of ${x} subject adds`);
-  // const subjectValues = d3c.values(this.inventory.subjects);
   if (x) {
     [...Array(x).keys()].forEach(() => {
-      const idx = Math.floor(Math.random() * dataset.children.length);// between 0 and 10
+      const idx = Math.floor(Math.random() * dataset.children.length);
       const subject = dataset.children[idx];
       retval.push({ 'subject.add': subject }); // a subject from the dataset
       this.addToInventory(subject);
@@ -164,7 +163,7 @@ Then replace the addSamples function with the following:
 ```js
   static addSample(subject) {
     const now = new Date().toJSON();
-    const idx = Math.floor(Math.random() * dataset.length);// between 0 and 10
+    const idx = Math.floor(Math.random() * dataset.length);
     const aspectName = dataset[idx];
     return {
       aspect: { name: aspectName },
@@ -437,8 +436,6 @@ function draw() {
   const infoHolder = document.getElementById('info');
   for (let subj of subjects) {
     const { subjectIndex, sampleIndexes } = getIndexOfSubjectAndSample(subj, subjectsData, aspectsData);
-    // info.innerHTML = 'subject ' + subj.absolutePath + ', is at index ' +
-    //   subjectIndex + ' has ' + subj.samples.length + ' samples' + ' and they are at ' + sampleIndexes;
     for (let i = sampleIndexes.length - 1; i >= 0; i--) {
       // highlight samples
       const sampleNode = STAGE.childNodes[subjectIndex].childNodes[sampleIndexes[i]];
@@ -449,8 +446,6 @@ function draw() {
       }, 1000); //<-- Delay in milliseconds
     }
   }
-
-  // document.getElementById('subjectsArr').innerHTML = '# of Columns:' + subjects.size + ', ' + [...subjects].map((subj) => subj.name);
 } // draw
 
 const eventTarget = {
