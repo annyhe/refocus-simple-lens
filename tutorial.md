@@ -234,6 +234,10 @@ In the src folder, add the following file called `utils.js`:
 */
 function getIndexOfSubjectAndSample(subject, subjectsData, aspectsData) {
   let subjectIndex = -1;
+  if (!subjectsData.children) {
+    return { subjectIndex: -1, sampleIndexes: [] };
+  }
+
   for (let i = subjectsData.children.length - 1; i >= 0; i--) {
     if (subjectsData.children[i].absolutePath === subject.absolutePath) {
       subjectIndex = i;
@@ -242,6 +246,10 @@ function getIndexOfSubjectAndSample(subject, subjectsData, aspectsData) {
   }
 
   const sampleIndexes = [];
+  if (!subject.samples) {
+    return { subjectIndex, sampleIndexes: [] };
+  }
+
   for (let i = subject.samples.length - 1; i >= 0; i--) {
     const aspectName = subject.samples[i].name.split('|')[1];
     sampleIndexes.push(aspectsData.indexOf(aspectName));
@@ -420,7 +428,7 @@ Add the `main.js` file to the `src` folder
 require('./lens.css');
 const subjectsData = require('../../../public/datasets/one-level.json');
 const aspectsData = require('../../../public/datasets/one-level-aspects.json');
-const loadingTemplate = require('./template/gameSpace.handlebars');
+const loadingTemplate = require('./templates/gameSpace.handlebars');
 const renderStage = require('./game').renderStage;
 const realtimeChangeHandler = require('./utils').realtimeChangeHandler;
 const getIndexOfSubjectAndSample = require('./utils').getIndexOfSubjectAndSample;
@@ -436,14 +444,16 @@ function draw() {
   const infoHolder = document.getElementById('info');
   for (let subj of subjects) {
     const { subjectIndex, sampleIndexes } = getIndexOfSubjectAndSample(subj, subjectsData, aspectsData);
-    for (let i = sampleIndexes.length - 1; i >= 0; i--) {
-      // highlight samples
-      const sampleNode = STAGE.childNodes[subjectIndex].childNodes[sampleIndexes[i]];
-      sampleNode.className = 'highlight';
-      window.setTimeout(function(){
-        // remove class after a time period
-        sampleNode.className = '';
-      }, 1000); //<-- Delay in milliseconds
+    if (subjectIndex > -1 && sampleIndexes) {
+      for (let i = sampleIndexes.length - 1; i >= 0; i--) {
+        // highlight samples
+        const sampleNode = STAGE.childNodes[subjectIndex].childNodes[sampleIndexes[i]];
+        sampleNode.className = 'highlight';
+        window.setTimeout(function(){
+          // remove class after a time period
+          sampleNode.className = '';
+        }, 1000); //<-- Delay in milliseconds
+      }
     }
   }
 } // draw
@@ -533,7 +543,7 @@ The screen should look like this
 ## Troubleshooting
 No samples streaming in: make sure to configure the samples and subjects to be added in the http://localhost:3000/configForm.html. Refer to the `Stream Samples` section of this tutorial.
 
-Cannot read the length of undefiend in getIndexOfSubjectAndSample: are the subject datasets and aspect datasets loaded corrctly in main.js? If so, refresh the page on http://localhost:3000 and the error should go away.
+Cannot read the length of undefiend in getIndexOfSubjectAndSample: make sure you are using the right dataset. Check the dropdown value in http://localhost:3000/configForm.html.
 
 ## Extras
 ### Build and deploy
